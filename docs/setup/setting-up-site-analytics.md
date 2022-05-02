@@ -68,6 +68,30 @@ following lines to `mkdocs.yml`:
 
   [site search]: setting-up-site-search.md
 
+??? question "How to set up the property value as a Github repository secret?"
+
+    The `property` identifier on your `mkdocs.yml` will contain either the `G-XXXXXXXXXX` or `UA-XXXXXXXX-X` property identifier you get from Google. If you don't want to expose its value on your GitHub repository, you can do the following:
+
+    1. Access GitHub's **Settings**, then the **Secrets > Action**. Click the **New repository secret** button and add the key value pair (e.g.: Name=`GOOGLE_ANALYTICS_KEY`, Value=`G-XXXXXXXXXX`).
+
+    2. Add the following lines to `mkdocs.yml`:
+    
+    ``` yaml
+    extra:
+      analytics:
+        provider: google
+        property: !ENV GOOGLE_ANALYTICS_KEY
+    ```
+
+    3. Update your `.github/workflows/ci.yml` that does the deployment to consume the secret:
+    ```yaml
+    env:
+      GOOGLE_ANALYTICS_KEY: ${{ secrets.GOOGLE_ANALYTICS_KEY }}
+    run: |
+      mkdocs gh-deploy --force
+      mkdocs --version
+    ```
+
 ### Was this page helpful?
 
 [:octicons-heart-fill-24:{ .mdx-heart } Insiders][Insiders]{ .mdx-insiders } ·
